@@ -1,0 +1,4 @@
+/id_rsa*
+/repo
+*.tar
+/known_hosts

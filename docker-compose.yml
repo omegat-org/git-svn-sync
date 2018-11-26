@@ -1,0 +1,8 @@
+version: "3"
+services:
+  sync:
+    build:
+      context: .
+    image: git-svn-sync
+    volumes:
+      - "./repo:/repo"
