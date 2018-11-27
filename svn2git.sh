@@ -2,7 +2,12 @@
 
 set -euo pipefail
 
-cd /repo
+if [ ! -d /repo ]; then
+    mkdir /repo
+    aws s3 cp s3://omegat/omegat-git-svn.tar.gz - | tar xvz -C /repo
+fi
+
+cd /repo/*
 # Ensure garbage collection happens synchronously, not in background.
 git config gc.autodetach false
 git svn info
