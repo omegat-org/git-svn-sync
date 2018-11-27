@@ -1,5 +1,13 @@
 HOSTS := git.code.sf.net svn.code.sf.net
-AWSENV = env $$(cat awsconfig)
+AWS_ARGS :=
+AWS = aws $(AWS_ARGS)
+AWS_GET = $(AWS) configure get
+AWS_ACCOUNT_ID = $(shell $(AWS) sts get-caller-identity --query 'Account' --output text)
+AWS_REGION = $(shell $(AWS_GET) region)
+AWSENV = AWS_ACCESS_KEY_ID=$(shell $(AWS_GET) aws_access_key_id) \
+  AWS_SECRET_ACCESS_KEY=$(shell $(AWS_GET) aws_secret_access_key) \
+  AWS_DEFAULT_REGION=$(AWS_REGION)
+
 
 .PHONY: build run-local run-s3 shell
 
@@ -12,26 +20,16 @@ known_hosts:
 build: | id_rsa known_hosts
 	docker-compose build
 
-define AWSCONFIG_TEMPLATE
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=
-endef
-
-awsconfig:
-	$(info Put these values into a file ./awsconfig:)
-	$(info $(AWSCONFIG_TEMPLATE))
-	$(error ./awsconfig not found)
-
 repo:
 	$(info Put a local copy of the git repo to be synced in ./repo/NAME)
 	$(error ./repo not found)
 
-run-local: | awsconfig repo
-	$(AWSENV) docker-compose run -v "$(PWD)/repo:/repo" --rm sync
+run-local: | repo
+	@$(AWSENV) docker-compose run -v "$(PWD)/repo:/repo" --rm sync
 
-run-s3: | awsconfig
-	$(AWSENV) docker-compose run --rm sync
+run-s3:
+	@$(AWSENV) docker-compose run --rm sync
 
-shell: | awsconfig
-	$(AWSENV) docker-compose run --entrypoint /bin/sh --rm sync
+shell:
+	@$(AWSENV) docker-compose run --entrypoint /bin/sh --rm sync
+
