@@ -9,7 +9,7 @@ AWSENV = AWS_ACCESS_KEY_ID=$(shell $(AWS_GET) aws_access_key_id) \
   AWS_DEFAULT_REGION=$(AWS_REGION)
 
 
-.PHONY: build run-local run-s3 shell
+.PHONY: build run-local run-s3 shell deploy
 
 id_rsa:
 	ssh-keygen -t rsa -N "" -f $@
@@ -33,3 +33,8 @@ run-s3:
 shell:
 	@$(AWSENV) docker-compose run --entrypoint /bin/sh --rm sync
 
+deploy:
+	$$($(AWS) ecr get-login --no-include-email)
+	TAG=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/omegat/git-svn-sync; \
+		docker tag git-svn-sync:latest $$TAG; \
+		docker push $$TAG
