@@ -3,3 +3,4 @@
 *.tar
 *.tar.gz
 /known_hosts
+/awsconfig

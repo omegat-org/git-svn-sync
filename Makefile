@@ -1,4 +1,5 @@
 HOSTS := git.code.sf.net svn.code.sf.net
+AWSENV = env $$(cat awsconfig)
 
 .PHONY: build run shell
 
@@ -11,8 +12,19 @@ known_hosts:
 build: | id_rsa known_hosts
 	docker-compose build
 
-run:
-	docker-compose run --rm sync
+define AWSCONFIG_TEMPLATE
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=
+endef
 
-shell:
-	docker-compose run --entrypoint /bin/sh --rm sync
+awsconfig:
+	$(info Put these values into a file ./awsconfig:)
+	$(info $(AWSCONFIG_TEMPLATE))
+	$(error ./awsconfig not found)
+
+run: | awsconfig
+	$(AWSENV) docker-compose run -v "$(PWD)/repo:/repo" --rm sync
+
+shell: | awsconfig
+	$(AWSENV) docker-compose run --entrypoint /bin/sh --rm sync
