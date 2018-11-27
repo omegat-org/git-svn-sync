@@ -1,7 +1,7 @@
 HOSTS := git.code.sf.net svn.code.sf.net
 AWSENV = env $$(cat awsconfig)
 
-.PHONY: build run shell
+.PHONY: build run-local run-s3 shell
 
 id_rsa:
 	ssh-keygen -t rsa -N "" -f $@
@@ -23,8 +23,15 @@ awsconfig:
 	$(info $(AWSCONFIG_TEMPLATE))
 	$(error ./awsconfig not found)
 
-run: | awsconfig
+repo:
+	$(info Put a local copy of the git repo to be synced in ./repo/NAME)
+	$(error ./repo not found)
+
+run-local: | awsconfig repo
 	$(AWSENV) docker-compose run -v "$(PWD)/repo:/repo" --rm sync
+
+run-s3: | awsconfig
+	$(AWSENV) docker-compose run --rm sync
 
 shell: | awsconfig
 	$(AWSENV) docker-compose run --entrypoint /bin/sh --rm sync
