@@ -11,6 +11,15 @@ cd /repo/*
 # Ensure garbage collection happens synchronously, not in background.
 git config gc.autodetach false
 git svn info
+
+# Make sure we actually need to do work.
+GIT_SHA=$(git rev-parse master)
+SVN_REVISION=$(git svn find-rev $GIT_SHA)
+SVN_REVISION_REMOTE=$(svn info --show-item revision svn://svn.code.sf.net/p/omegat/svn/trunk)
+if [ "$SVN_REVISION" = "$SVN_REVISION_REMOTE" ]; then
+    exit 0
+fi
+
 # Overwrite the authors file with the latest version from SVN.
 svn cat svn://svn.code.sf.net/p/omegat/svn/trunk/release/ci/authors.txt >authors-new
 mv authors-new authors
