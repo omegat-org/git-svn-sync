@@ -21,8 +21,7 @@ if [ "$SVN_REVISION" = "$SVN_REVISION_REMOTE" ]; then
 fi
 
 # Overwrite the authors file with the latest version from SVN.
-svn cat svn://svn.code.sf.net/p/omegat/svn/trunk/release/ci/authors.txt >authors-new
-mv authors-new authors
+svn cat svn://svn.code.sf.net/p/omegat/svn/trunk/release/ci/authors.txt >authors
 git svn fetch
 git branch -f master trunk
 # New tags will appear in refs/remotes/tags, but will disappear after repacking.
