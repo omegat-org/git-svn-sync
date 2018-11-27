@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -euo pipefail
+
 cd /repo
 # Ensure garbage collection happens synchronously, not in background.
 git config gc.autodetach false
