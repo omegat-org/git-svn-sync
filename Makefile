@@ -31,7 +31,7 @@ run-s3:
 	@$(AWSENV) docker-compose run --rm sync
 
 shell:
-	@$(AWSENV) docker-compose run --entrypoint /bin/sh --rm sync
+	@$(AWSENV) docker-compose run -v "$(PWD)/repo:/repo" --entrypoint /bin/sh --rm sync
 
 deploy:
 	$$($(AWS) ecr get-login --no-include-email)
