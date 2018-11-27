@@ -23,5 +23,10 @@ GIT_SHA=$(git rev-parse master)
 GIT_SHA_SHORT=$(git rev-parse --short $GIT_SHA)
 SVN_REVISION=$(git svn find-rev $GIT_SHA)
 echo "r$SVN_REVISION $GIT_SHA_SHORT"
-#cd ..
-#tar -cf $REPO.tar $REPO
+
+cd /repo
+tar czvf $(echo *).tar.gz *
+TARGET=$(echo *.tar.gz)
+TEMP=$TARGET-r$SVN_REVISION
+aws s3 cp ./*.tar.gz s3://omegat/$TEMP
+aws s3 mv s3://omegat/$TEMP s3://omegat/$TARGET
