@@ -4,7 +4,7 @@ set -euox pipefail
 
 if [ ! -d /repo ]; then
     mkdir /repo
-    aws s3 cp s3://omegat/omegat-git-svn.tar.gz - | tar xvz -C /repo
+    aws s3 cp s3://omegat/omegat-git-svn.tar.gz - | tar xz -C /repo
 fi
 
 cd /repo/*
@@ -27,7 +27,7 @@ echo "r$SVN_REVISION $GIT_SHA_SHORT"
 git gc
 
 cd /repo
-tar czvf $(echo *).tar.gz *
+tar czf $(echo *).tar.gz *
 TARGET=$(echo *.tar.gz)
 TEMP=$TARGET-r$SVN_REVISION
 aws s3 cp ./*.tar.gz s3://omegat/$TEMP
