@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -euo pipefail
+set -euox pipefail
 
 if [ ! -d /repo ]; then
     mkdir /repo
