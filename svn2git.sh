@@ -24,6 +24,8 @@ GIT_SHA_SHORT=$(git rev-parse --short $GIT_SHA)
 SVN_REVISION=$(git svn find-rev $GIT_SHA)
 echo "r$SVN_REVISION $GIT_SHA_SHORT"
 
+git gc
+
 cd /repo
 tar czvf $(echo *).tar.gz *
 TARGET=$(echo *.tar.gz)
