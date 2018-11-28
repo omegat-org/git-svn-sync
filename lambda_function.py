@@ -1,6 +1,11 @@
 import boto3
 
 
+def already_running():
+    ecs = boto3.client('ecs')
+    return ecs.list_tasks(family='omegat-git-svn-sync-task')['taskArns']
+
+
 def put_event():
     events = boto3.client('events')
     return events.put_events(Entries=[
@@ -13,9 +18,12 @@ def put_event():
 
 
 def run():
-    result = put_event()
-    print(result)
-    return 'OK'
+    if already_running():
+        return 'OK (skipped)'
+    else:
+        result = put_event()
+        print(result)
+        return 'OK'
 
 
 def lambda_handler(event, context):
