@@ -35,9 +35,11 @@ run-s3:
 shell:
 	@$(AWSENV) docker-compose run -v "$(PWD)/repo:/repo" --entrypoint /bin/sh --rm sync
 
+AWS_ECR_TAG = $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/omegat/git-svn-sync
+
 deploy:
 	$$($(AWS) ecr get-login --no-include-email)
-	TAG=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/omegat/git-svn-sync; \
+	TAG=$(AWS_ECR_TAG); \
 		docker tag git-svn-sync:latest $$TAG; \
 		docker push $$TAG
 
