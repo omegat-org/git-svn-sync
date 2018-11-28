@@ -1,3 +1,5 @@
+SHELL := /bin/bash -O extglob
+
 HOSTS := git.code.sf.net svn.code.sf.net
 AWS_ARGS :=
 AWS = aws $(AWS_ARGS)
@@ -38,3 +40,24 @@ deploy:
 	TAG=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/omegat/git-svn-sync; \
 		docker tag git-svn-sync:latest $$TAG; \
 		docker push $$TAG
+
+LAMBDA_PAYLOAD := lambda.zip
+LAMBDA_NAME := OmegatGitSvnSyncFunction
+
+.env:
+	virtualenv .env
+	.env/bin/pip install boto3
+
+$(LAMBDA_PAYLOAD): *.py | .env
+	rm -rf $(@)
+	zip $(@) $(^) -x \*.pyc
+	ROOT=$$(pwd); cd .env/lib/python3.*/site-packages; \
+		zip -r $$ROOT/$(@) ./!(pip*|wheel*|setuptools*|easy_install*) -x \*.pyc
+
+deploy-lambda: $(LAMBDA_PAYLOAD)
+	$(AWS) lambda update-function-code \
+		--function-name $(LAMBDA_NAME) \
+		--zip-file fileb://$$(pwd)/$(<)
+
+invoke-lambda:
+	$(AWS) lambda invoke --function-name $(LAMBDA_NAME) /dev/null
