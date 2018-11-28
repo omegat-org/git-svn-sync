@@ -11,7 +11,7 @@ AWSENV = AWS_ACCESS_KEY_ID=$(shell $(AWS_GET) aws_access_key_id) \
   AWS_DEFAULT_REGION=$(AWS_REGION)
 
 
-.PHONY: build run-local run-s3 shell deploy
+.PHONY: build run-local run-s3 shell deploy deploy-lambda invoke-lambda
 
 id_rsa:
 	ssh-keygen -t rsa -N "" -f $@
