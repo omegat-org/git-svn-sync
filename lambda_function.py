@@ -10,7 +10,7 @@ def put_event():
     events = boto3.client('events')
     return events.put_events(Entries=[
         {
-            'Source': 'git-svn-sync-lambda',
+            'Source': 'omegat-git-svn-sync-lambda',
             'DetailType': '{}',
             'Detail': '{}'
         }
