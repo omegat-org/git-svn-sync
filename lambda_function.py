@@ -12,15 +12,20 @@ def put_event():
     ])
 
 
-def lambda_handler(event, context):
-    print(event)
+def run():
     result = put_event()
     print(result)
+    return 'OK'
+
+
+def lambda_handler(event, context):
+    print(event)
+    body = run()
     # Format to be consumed by API Gateway proxy:
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-output-format
     return {
         'statusCode': 200,
-        'body': 'OK',
+        'body': body,
         'headers': {},
         'isBase64Encoded': False
     }
