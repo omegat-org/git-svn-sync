@@ -46,15 +46,9 @@ deploy:
 LAMBDA_PAYLOAD := lambda.zip
 LAMBDA_NAME := OmegatGitSvnSyncFunction
 
-.env:
-	virtualenv .env
-	.env/bin/pip install boto3
-
-$(LAMBDA_PAYLOAD): *.py | .env
+$(LAMBDA_PAYLOAD): *.py
 	rm -rf $(@)
 	zip $(@) $(^) -x \*.pyc
-	ROOT=$$(pwd); cd .env/lib/python3.*/site-packages; \
-		zip -r $$ROOT/$(@) ./!(pip*|wheel*|setuptools*|easy_install*) -x \*.pyc
 
 deploy-lambda: $(LAMBDA_PAYLOAD)
 	$(AWS) lambda update-function-code \
