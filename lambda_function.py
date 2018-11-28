@@ -2,6 +2,7 @@ import boto3
 
 
 def lambda_handler(event, context):
+    print(event)
     events = boto3.client('events')
     result = events.put_events(Entries=[
         {
