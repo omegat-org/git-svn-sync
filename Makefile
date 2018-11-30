@@ -71,3 +71,6 @@ AWS_LAMBDA_INVOKE = $(AWS) lambda invoke --function-name $(1) /dev/null
 invoke-lambda:
 	$(call AWS_LAMBDA_UPDATE,$(LAMBDA_TRIGGER))
 
+.PHONY: clean
+clean:
+	rm -rf $(LAMBDA_PAYLOAD)
