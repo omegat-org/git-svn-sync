@@ -28,7 +28,7 @@ def verify(payload, signature, secret):
 
 
 def lambda_handler(event, context):
-    print(body)
+    print(event)
     body = event['body']
     signature = event['headers']['X-Allura-Signature']
     if not verify(body, signature, secret):
