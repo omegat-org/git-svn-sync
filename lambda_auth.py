@@ -28,11 +28,6 @@ def verify(payload, signature, secret):
 
 
 def lambda_handler(event, context):
-    print("Client token: " + event['authorizationToken'])
-    print("Method ARN: " + event['methodArn'])
-    """validate the incoming token"""
-    """and produce the principal user identifier associated with the token"""
-
     print(body)
     body = event['body']
     signature = event['headers']['X-Allura-Signature']
