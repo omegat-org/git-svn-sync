@@ -22,8 +22,8 @@ build: | id_rsa known_hosts
 	docker-compose build
 
 repo:
-	$(info Put a local copy of the git repo to be synced in ./repo/NAME)
-	$(error ./repo not found)
+	$(info Put a local copy of the git repo to be synced in $(@)/NAME)
+	$(error $(@) not found)
 
 .PHONY: run-local
 run-local: | repo
