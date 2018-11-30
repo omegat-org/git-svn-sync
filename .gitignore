@@ -5,4 +5,4 @@
 /known_hosts
 *.zip
 /.env
-/auth_secret
+secret

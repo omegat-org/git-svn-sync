@@ -1,4 +1,5 @@
 import boto3
+from verify import verify_event
 
 
 def already_running():
@@ -28,6 +29,13 @@ def run():
 
 def lambda_handler(event, context):
     print(event)
+    if not verify_event(event):
+        return {
+            'statusCode': 401,
+            'body': 'Unauthorized',
+            'headers': {},
+            'isBase64Encoded': False
+        }
     body = run()
     # Format to be consumed by API Gateway proxy:
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-output-format

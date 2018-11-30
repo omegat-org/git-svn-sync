@@ -47,38 +47,27 @@ deploy:
 		docker push $$TAG
 
 LAMBDA_TRIGGER := OmegatGitSvnSyncFunction
-LAMBDA_AUTH := OmegatGitSvnSyncAuthorizerFunction
+LAMBDA_PAYLOAD := lambda/payload.zip
 
-lambda_trigger.zip: lambda_trigger.py
+$(LAMBDA_PAYLOAD): lambda/*.py lambda/secret
 	rm -rf $(@)
-	zip $(@) $(^) -x \*.pyc
+	cd $(@D); zip $(@F) $(^F) -x \*.pyc
 
-auth_secret:
-	$(info Put the webhook secret into ./auth_secret)
-	$(error ./auth_secret not found)
-
-lambda_auth.zip: lambda_auth.py auth_secret
-	rm -rf $(@)
-	zip $(@) $(^) -x \*.pyc
+lambda/secret:
+	$(info Put the webhook secret into $(@))
+	$(error $(@) not found)
 
 AWS_LAMBDA_UPDATE = $(AWS) lambda update-function-code \
 	--function-name $1 \
 	--zip-file fileb://$$(pwd)/$(<)
 
 .PHONY: deploy-trigger
-deploy-trigger: lambda_trigger.zip
+deploy-lambda: $(LAMBDA_PAYLOAD)
 	$(call AWS_LAMBDA_UPDATE,$(LAMBDA_TRIGGER))
-
-.PHONY: deploy-auth
-deploy-auth: lambda_auth.zip
-	$(call AWS_LAMBDA_UPDATE,$(LAMBDA_AUTH))
 
 AWS_LAMBDA_INVOKE = $(AWS) lambda invoke --function-name $1 /dev/null
 
 .PHONY: invoke-trigger
-invoke-trigger:
+invoke-lambda:
 	$(call AWS_LAMBDA_UPDATE,$(LAMBDA_TRIGGER))
 
-.PHONY: invoke-auth
-invoke-auth:
-	$(call AWS_LAMBDA_UPDATE,$(LAMBDA_AUTH))
