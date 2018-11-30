@@ -58,14 +58,14 @@ lambda/secret:
 	$(error $(@) not found)
 
 AWS_LAMBDA_UPDATE = $(AWS) lambda update-function-code \
-	--function-name $1 \
+	--function-name $(1) \
 	--zip-file fileb://$$(pwd)/$(<)
 
 .PHONY: deploy-trigger
 deploy-lambda: $(LAMBDA_PAYLOAD)
 	$(call AWS_LAMBDA_UPDATE,$(LAMBDA_TRIGGER))
 
-AWS_LAMBDA_INVOKE = $(AWS) lambda invoke --function-name $1 /dev/null
+AWS_LAMBDA_INVOKE = $(AWS) lambda invoke --function-name $(1) /dev/null
 
 .PHONY: invoke-trigger
 invoke-lambda:
