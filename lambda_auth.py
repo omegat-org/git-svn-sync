@@ -13,6 +13,18 @@ import re
 import time
 import pprint
 import json
+import hmac
+
+
+with open('auth_secret') as in_file:
+    secret = in_file.read().strip()
+
+
+def verify(payload, signature, secret):
+    actual_signature = hmac.new(secret.encode(
+        'utf-8'), payload.encode('utf-8'), hashlib.sha1)
+    actual_signature = 'sha1=' + actual_signature.hexdigest()
+    return hmac.compare_digest(actual_signature, signature)
 
 
 def lambda_handler(event, context):
@@ -21,11 +33,17 @@ def lambda_handler(event, context):
     """validate the incoming token"""
     """and produce the principal user identifier associated with the token"""
 
+    print(body)
+    body = event['body']
+    signature = event['headers']['X-Allura-Signature']
+    if not verify(body, signature, secret):
+        raise Exception('Unauthorized')
+
     """this could be accomplished in a number of ways:"""
     """1. Call out to OAuth provider"""
     """2. Decode a JWT token inline"""
     """3. Lookup in a self-managed DB"""
-    principalId = "user|a1b2c3d4"
+    principalId = "*"
 
     """you can send a 401 Unauthorized response to the client by failing like so:"""
     """raise Exception('Unauthorized')"""
@@ -52,7 +70,7 @@ def lambda_handler(event, context):
     policy.region = tmp[3]
     policy.stage = apiGatewayArnTmp[1]
     policy.denyAllMethods()
-    """policy.allowMethod(HttpVerb.GET, "/pets/*")"""
+    policy.allowMethod(HttpVerb.GET, "/git-svn-sync")
 
     # Finally, build the policy
     authResponse = policy.build()
