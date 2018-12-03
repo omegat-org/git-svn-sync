@@ -93,3 +93,11 @@ lambda.
     and triggers the ECS task
 
 TODO: Automate all this setup
+
+## Known issues
+
+- If two API calls are received in quick succession, multiple tasks may run: the
+  second lambda invocation may not see any tasks running yet, so it will not
+  skip running a new task
+- It's not clear what happens when two tasks try to upload the same repo tarball
+  to S3 concurrently
