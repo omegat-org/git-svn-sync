@@ -69,7 +69,7 @@ AWS_LAMBDA_INVOKE = $(AWS) lambda invoke --function-name $(1) /dev/null
 
 .PHONY: invoke-trigger
 invoke-lambda:
-	$(call AWS_LAMBDA_UPDATE,$(LAMBDA_TRIGGER))
+	$(call AWS_LAMBDA_INVOKE,$(LAMBDA_TRIGGER))
 
 .PHONY: clean
 clean:
